@@ -50,11 +50,11 @@ class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
             db.session.add(user2)
             db.session.commit()
 
-            MyBaseQuery.filter_name = 'vwms'
+            MyBaseQuery.filter_base = 'vwms'
             users = User.query.all()
             self.assertEqual(users[0].name, 'vwms')
 
-            MyBaseQuery.filter_name = 'vwms1'
+            MyBaseQuery.filter_base = 'vwms1'
             user_first = User.query.first()
             self.assertTrue(user_first is None)
 
