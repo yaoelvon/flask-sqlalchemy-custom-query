@@ -1,29 +1,30 @@
 # -*- coding: utf-8 -*-
 
-# @date 2016/06/02
+# @date 2016/06/03
 # @author fengyao.me
 # @desc custom methods of the query class in Flask-SQLAlchemy
 # @record
 #
 
-from flask import Flask
+
 from flask_sqlalchemy import BaseQuery, Model, _BoundDeclarativeMeta, SQLAlchemy as BaseSQLAlchemy, _QueryProperty
 from sqlalchemy.ext.declarative import declarative_base
 
 
 class MyBaseQuery(BaseQuery):
     # do stuff here
+    filter_name = ""
 
     def all(self):
-        return list(self.filter_by(name="vwms"))
+        return list(self.filter_by(name=self.filter_name))
 
     def first(self):
         """改写basequery的first方法. 增加过滤条件
         """
         if self._statement is not None:
-            ret = list(self.filter_by(name="vwms1"))[0:1]
+            ret = list(self.filter_by(name=self.filter_name))[0:1]
         else:
-            ret = list(self.filter_by(name="vwms1")[0:1])
+            ret = list(self.filter_by(name=self.filter_name)[0:1])
         if len(ret) > 0:
             return ret[0]
         else:
@@ -46,38 +47,3 @@ class SQLAlchemy(BaseSQLAlchemy):
         return base
 
 db = SQLAlchemy()
-
-
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), unique=True)
-
-app = Flask(__name__)
-db.init_app(app)
-
-if __name__ == "__main__":
-    with app.test_request_context():
-        db.drop_all()
-        db.create_all()
-
-        user1 = User()
-        user2 = User()
-        user1.name = 'vwms'
-        user2.name = 'fengyao'
-        db.session.add(user1)
-        db.session.add(user2)
-        db.session.commit()
-
-        users = User.query.all()
-        for i in range(len(users)):
-            print users[i].name
-
-        user_first = User.query.first()
-        # print user_first
-        if user_first is None:
-            print "user first is None"
-        else:
-            print user_first.name
-
-    app.run(port=8765, debug=True)
