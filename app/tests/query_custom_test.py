@@ -10,24 +10,24 @@ import unittest
 
 from flask.ext.fixtures import FixturesMixin
 from app import create_app
-from app.database import MyBaseQuery
+from app.database import MyBaseQuery, db
 from app.models import User
 
 
 class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
     @classmethod
     def setUpClass(cls):
-        cls.app, cls.db = create_app()
+        cls.app = create_app()
         with cls.app.test_request_context():
-            cls.db.create_all()
+            db.create_all()
     #         cls.app.config['FIXTURES_DIRS'] = ['./fixtures']
-    #         FixturesMixin.init_app(cls.app, cls.db)
+    #         FixturesMixin.init_app(cls.app, db)
     # fixtures = ['user.json']
 
     @classmethod
     def tearDownClass(cls):
         with cls.app.test_request_context():
-            cls.db.drop_all()
+            db.drop_all()
 
     def setUp(self):
         # self.app_context = self.app.app_context()
@@ -46,9 +46,10 @@ class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
             user2 = User()
             user1.name = 'vwms'
             user2.name = 'fengyao'
-            self.db.session.add(user1)
-            self.db.session.add(user2)
-            self.db.session.commit()
+            db.session.add(user1)
+            db.session.add(user2)
+            db.session.commit()
+
             MyBaseQuery.filter_name = 'vwms'
             users = User.query.all()
             self.assertEqual(users[0].name, 'vwms')
