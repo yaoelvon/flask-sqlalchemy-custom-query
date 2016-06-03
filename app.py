@@ -2,7 +2,7 @@
 
 # @date 2016/06/02
 # @author fengyao.me
-# @desc override the query class in Flask-SQLAlchemy
+# @desc custom methods of the query class in Flask-SQLAlchemy
 # @record
 #
 
@@ -13,19 +13,6 @@ from sqlalchemy.ext.declarative import declarative_base
 
 class MyBaseQuery(BaseQuery):
     # do stuff here
-
-    # def __init__(self, *args, **kwargs):
-        # super(MyBaseQuery, self).__init__(*args, **kwargs)
-        # print "1   3hehe"
-        # print self
-        # self = self.filter_by(name='vwms').first()
-        # self = self.filter_by(name="vwms")
-        # print self.filter_by(name="vwms")
-        # self = self.first()
-        # print self.__class__
-        # print self.__dict__
-        # print self
-        # print "haha"
 
     def all(self):
         return list(self.filter_by(name="vwms"))
@@ -81,8 +68,7 @@ if __name__ == "__main__":
         db.session.add(user1)
         db.session.add(user2)
         db.session.commit()
-        # print user1
-        # print User.query.filter_by(name='vwms')
+
         users = User.query.all()
         for i in range(len(users)):
             print users[i].name

@@ -1,1 +1,1 @@
-About flask-sqlalchemy query custom
+About custom methods of the query class in Flask-SQLAlchemy
