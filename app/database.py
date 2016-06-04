@@ -56,4 +56,9 @@ class SQLAlchemy(BaseSQLAlchemy):
         base.query = _QueryProperty(self)
         return base
 
-db = SQLAlchemy()
+# To handle Flask-Fixtures's Bug: https://github.com/croach/Flask-Fixtures/issues/22
+TEST = True
+if TEST is True:
+    from app.tests.test_config import db
+else:
+    db = SQLAlchemy()

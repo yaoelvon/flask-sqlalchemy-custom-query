@@ -8,26 +8,27 @@
 
 import unittest
 
-from flask.ext.fixtures import FixturesMixin
-from app import create_app
-from app.database import MyBaseQuery, db
+from flask import Flask
+from app.database import MyBaseQuery
 from app.models import User
+from flask.ext.fixtures import FixturesMixin
+from app.tests.test_config import app, db
+from app import create_app
 
 
 class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
     @classmethod
     def setUpClass(cls):
-        cls.app = create_app()
-        with cls.app.test_request_context():
-            db.create_all()
-    #         cls.app.config['FIXTURES_DIRS'] = ['./fixtures']
-    #         FixturesMixin.init_app(cls.app, db)
-    # fixtures = ['user.json']
+        db.create_all()
+        cls.app, _ = create_app()
+        cls.app.config['FIXTURES_DIRS'] = [cls.app.root_path + '/tests/fixtures']
+        FixturesMixin.init_app(app, db)
+    fixtures = ['user.json']
 
     @classmethod
     def tearDownClass(cls):
-        with cls.app.test_request_context():
-            db.drop_all()
+        # with cls.app.test_request_context():
+        db.drop_all()
 
     def setUp(self):
         # self.app_context = self.app.app_context()
@@ -41,22 +42,13 @@ class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
 
     # @unittest.skip('')
     def test_custom_query(self):
-        with self.app.test_request_context():
-            user1 = User()
-            user2 = User()
-            user1.name = 'vwms'
-            user2.name = 'fengyao'
-            db.session.add(user1)
-            db.session.add(user2)
-            db.session.commit()
+        MyBaseQuery.filter_base = 'vwms'
+        users = User.query.all()
+        self.assertEqual(users[0].name, 'vwms')
 
-            MyBaseQuery.filter_base = 'vwms'
-            users = User.query.all()
-            self.assertEqual(users[0].name, 'vwms')
-
-            MyBaseQuery.filter_base = 'vwms1'
-            user_first = User.query.first()
-            self.assertTrue(user_first is None)
+        MyBaseQuery.filter_base = 'vwms1'
+        user_first = User.query.first()
+        self.assertTrue(user_first is None)
 
 if __name__ == '__main__':
     unittest.main()
