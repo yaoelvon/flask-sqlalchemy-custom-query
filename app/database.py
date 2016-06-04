@@ -45,7 +45,7 @@ class MyModel(Model):
     query_class = MyBaseQuery
 
 
-class SQLAlchemy(BaseSQLAlchemy):
+class MySQLAlchemy(BaseSQLAlchemy):
     def make_declarative_base(self, metadata=None):
         # in this case we're just using a custom Model class,
         # but you can change the DelcarativeMeta or other stuff as well
@@ -61,4 +61,4 @@ TEST = True
 if TEST is True:
     from app.tests.test_config import db
 else:
-    db = SQLAlchemy()
+    db = MySQLAlchemy()

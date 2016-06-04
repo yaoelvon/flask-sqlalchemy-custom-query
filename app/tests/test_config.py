@@ -9,7 +9,7 @@
 
 from flask import Flask
 # from flask.ext.sqlalchemy import SQLAlchemy
-from app.database import SQLAlchemy
+from app.database import MySQLAlchemy
 
 app = Flask(__name__)
 
@@ -17,4 +17,4 @@ app.config['SECRET_KEY'] = 'hard to guess'
 app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dbTest.db'
 
-db = SQLAlchemy(app)
+db = MySQLAlchemy(app)
