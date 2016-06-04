@@ -7,11 +7,10 @@
 #
 
 import unittest
+from flask.ext.fixtures import FixturesMixin
 
-from flask import Flask
 from app.database import MyBaseQuery
 from app.models import User
-from flask.ext.fixtures import FixturesMixin
 from app.tests.test_config import app, db
 from app import create_app
 
@@ -41,14 +40,33 @@ class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
         self.app.logger.debug("------tear down finish------")
 
     # @unittest.skip('')
-    def test_custom_query(self):
+    def test_custom_query_all_filter_vwms(self):
         MyBaseQuery.filter_base = 'vwms'
         users = User.query.all()
+
+        self.assertEqual(len(users), 1)
         self.assertEqual(users[0].name, 'vwms')
 
+    # @unittest.skip('')
+    def test_custom_query_first_filter_vwms(self):
+        MyBaseQuery.filter_base = 'vwms'
+        user = User.query.first()
+
+        self.assertEqual(user.name, 'vwms')
+
+    # @unittest.skip('')
+    def test_custom_query_all_not_exist_vwms1(self):
         MyBaseQuery.filter_base = 'vwms1'
-        user_first = User.query.first()
-        self.assertTrue(user_first is None)
+        users = User.query.all()
+
+        self.assertEqual(len(users), 0)
+
+    # @unittest.skip('')
+    def test_custom_query_first_not_exist_vwms1(self):
+        MyBaseQuery.filter_base = 'vwms1'
+        user = User.query.first()
+
+        self.assertTrue(user is None)
 
 if __name__ == '__main__':
     unittest.main()
