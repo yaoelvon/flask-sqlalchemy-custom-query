@@ -6,6 +6,7 @@
 # @record
 #
 
+import json
 import unittest
 from flask.ext.fixtures import FixturesMixin
 
@@ -26,13 +27,12 @@ class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
 
     @classmethod
     def tearDownClass(cls):
-        # with cls.app.test_request_context():
         db.drop_all()
 
     def setUp(self):
-        # self.app_context = self.app.app_context()
-        # self.app_context.push()
-        # self.test_app = self.app.test_client()
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.test_app = self.app.test_client()
         self.app.logger.debug("------set up finish------")
 
     def tearDown(self):
@@ -40,33 +40,45 @@ class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
         self.app.logger.debug("------tear down finish------")
 
     # @unittest.skip('')
-    def test_custom_query_all_filter_vwms(self):
-        MyBaseQuery.filter_base = 'vwms'
+    def test_custom_query_first(self):
+        user = User.query.first()
+        self.assertEqual(user.name, 'vwms' or 'fengyao')
+
+    # @unittest.skip('')
+    def test_custom_query_all(self):
         users = User.query.all()
 
-        self.assertEqual(len(users), 1)
-        self.assertEqual(users[0].name, 'vwms')
+        self.assertEqual(len(users), 2)
 
+    # 当请求条件为：name=vwms,只获取name为vwms的数据
     # @unittest.skip('')
-    def test_custom_query_first_filter_vwms(self):
-        MyBaseQuery.filter_base = 'vwms'
-        user = User.query.first()
+    def test_request_args_normal_name(self):
+        response = self.test_app.get(
+            '/api/users?db_filters={"name":"vwms"}',
+            content_type='application/json;charset=utf-8')
 
-        self.assertEqual(user.name, 'vwms')
+        resp = json.loads(response.data)
+        self.assertEqual(resp['user'], '1')
 
+    # 当请求参数为空时，过滤条件为空，获取到所有用户信息
     # @unittest.skip('')
-    def test_custom_query_all_not_exist_vwms1(self):
-        MyBaseQuery.filter_base = 'vwms1'
-        users = User.query.all()
+    def test_request_args_null(self):
+        response = self.test_app.get(
+            '/api/users',
+            content_type='application/json;charset=utf-8')
 
-        self.assertEqual(len(users), 0)
+        resp = json.loads(response.data)
+        self.assertEqual(resp['user'], '2')
 
+    # 当请求条件为：name=vwms1, 获取用户数量为0
     # @unittest.skip('')
-    def test_custom_query_first_not_exist_vwms1(self):
-        MyBaseQuery.filter_base = 'vwms1'
-        user = User.query.first()
+    def test_request_args_not_exist_name(self):
+        response = self.test_app.get(
+            '/api/users?db_filters={"name":"vwms1"}',
+            content_type='application/json;charset=utf-8')
 
-        self.assertTrue(user is None)
+        resp = json.loads(response.data)
+        self.assertEqual(resp['user'], '0')
 
 if __name__ == '__main__':
     unittest.main()

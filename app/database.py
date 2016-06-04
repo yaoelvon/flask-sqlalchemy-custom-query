@@ -6,7 +6,7 @@
 # @record
 #
 
-
+from flask import request
 from flask_sqlalchemy import (
     BaseQuery,
     Model,
@@ -18,21 +18,31 @@ from sqlalchemy.ext.declarative import declarative_base
 
 class MyBaseQuery(BaseQuery):
     # do stuff here
-    filter_base = ""
 
     def all(self):
-        return list(self.filter_by(name=self.filter_base)) \
-            if self.filter_base != "" else list(self)
+        tenant_ctx = None if not request else request.environ['tenant_ctx']
+        if tenant_ctx is None or hasattr(tenant_ctx, 'db_filters')is False:
+            self = self
+        else:
+            for k, v in tenant_ctx.db_filters.items():
+                self = self.filter_by(**{k: v})
+
+        return list(self)
 
     def first(self):
         """改写basequery的first方法. 增加过滤条件
         """
-        if self._statement is not None:
-            ret = list(self.filter_by(name=self.filter_base))[0:1] \
-                if self.filter_base != "" else list(self)[0:1]
+        tenant_ctx = None if not request else request.environ['tenant_ctx']
+        if tenant_ctx is None or hasattr(tenant_ctx, 'db_filters')is False:
+            self = self
         else:
-            ret = list(self.filter_by(name=self.filter_base)[0:1]) \
-                if self.filter_base != "" else list(self[0:1])
+            for k, v in tenant_ctx.db_filters.items():
+                self = self.filter_by(**{k: v})
+
+        if self._statement is not None:
+            ret = list(self)[0:1]
+        else:
+            ret = list(self[0:1])
         if len(ret) > 0:
             return ret[0]
         else:
