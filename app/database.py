@@ -20,7 +20,7 @@ class MyBaseQuery(BaseQuery):
     # do stuff here
 
     def all(self):
-        tenant_ctx = None if not request else request.environ['tenant_ctx']
+        tenant_ctx = None if not request else request.environ.get('tenant_ctx')
         if tenant_ctx is None or hasattr(tenant_ctx, 'db_filters')is False:
             self = self
         else:
@@ -32,7 +32,7 @@ class MyBaseQuery(BaseQuery):
     def first(self):
         """改写basequery的first方法. 增加过滤条件
         """
-        tenant_ctx = None if not request else request.environ['tenant_ctx']
+        tenant_ctx = None if not request else request.environ.get('tenant_ctx')
         if tenant_ctx is None or hasattr(tenant_ctx, 'db_filters')is False:
             self = self
         else:

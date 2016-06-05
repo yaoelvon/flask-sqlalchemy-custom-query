@@ -10,24 +10,25 @@ import json
 import unittest
 from flask.ext.fixtures import FixturesMixin
 
-from app.database import MyBaseQuery
+# from app.database import MyBaseQuery
 from app.models import User
-from app.tests.test_config import app, db
+# from app.tests.test_config import app, db
 from app import create_app
 
 
 class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
     @classmethod
     def setUpClass(cls):
-        db.create_all()
-        cls.app, _ = create_app()
+        
+        cls.app, cls.db = create_app()
+        cls.db.create_all()
         cls.app.config['FIXTURES_DIRS'] = [cls.app.root_path + '/tests/fixtures']
-        FixturesMixin.init_app(app, db)
+        FixturesMixin.init_app(cls.app, cls.db)
     fixtures = ['user.json']
 
     @classmethod
     def tearDownClass(cls):
-        db.drop_all()
+        cls.db.drop_all()
 
     def setUp(self):
         self.app_context = self.app.app_context()
