@@ -1,2 +1,2 @@
 Flask==0.10.1
-Flask-Fixtures
+Flask-Fixtures==0.3.7

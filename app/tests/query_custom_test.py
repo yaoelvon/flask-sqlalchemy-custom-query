@@ -10,17 +10,16 @@ import json
 import unittest
 from flask.ext.fixtures import FixturesMixin
 
-# from app.database import MyBaseQuery
 from app.models import User
-# from app.tests.test_config import app, db
 from app import create_app
 
 
 class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
     @classmethod
     def setUpClass(cls):
-        
         cls.app, cls.db = create_app()
+        cls.app_context = cls.app.app_context()
+        cls.app_context.push()
         cls.db.create_all()
         cls.app.config['FIXTURES_DIRS'] = [cls.app.root_path + '/tests/fixtures']
         FixturesMixin.init_app(cls.app, cls.db)
@@ -29,15 +28,13 @@ class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
     @classmethod
     def tearDownClass(cls):
         cls.db.drop_all()
+        cls.app_context.pop()
 
     def setUp(self):
-        self.app_context = self.app.app_context()
-        self.app_context.push()
         self.test_app = self.app.test_client()
         self.app.logger.debug("------set up finish------")
 
     def tearDown(self):
-        # self.app_context.pop()
         self.app.logger.debug("------tear down finish------")
 
     # @unittest.skip('')
