@@ -1,0 +1,14 @@
+[
+    { 
+        "model": "app.models.User",
+        "table": "users",
+        "records": [{
+            "id": 1,
+            "name": "vwms1"
+        },
+        {
+            "id": 2,
+            "name": "fengyao"
+        }]
+    } 
+]

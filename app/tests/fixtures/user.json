@@ -10,5 +10,17 @@
             "id": 2,
             "name": "fengyao"
         }]
-    } 
+    },
+    {
+        "model": "app.models.Role",
+        "table": "roles",
+        "records": [{
+            "id": 1,
+            "name": "admin"
+        },
+        {
+            "id": 2,
+            "name": "manager"
+        }]
+    }
 ]

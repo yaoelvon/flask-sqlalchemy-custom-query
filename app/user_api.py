@@ -17,6 +17,7 @@ user = Blueprint('user', __name__)
 def filter_base_get():
     # 前端发送一个db_filters={"name":"vwms"}字典，将其存入租户实例
     tenant_ctx = TenantContext(request.args.get('db_filters'))
+    print("tenant_ctx: {0}, type: {1}".format(tenant_ctx, type(tenant_ctx)))
     request.environ['tenant_ctx'] = tenant_ctx
 
 

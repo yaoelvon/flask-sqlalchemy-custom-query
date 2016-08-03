@@ -10,7 +10,7 @@ import json
 import unittest
 from flask.ext.fixtures import FixturesMixin
 
-from app.models import User
+from app.models import User, Role
 from app import create_app
 
 
@@ -22,7 +22,7 @@ class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
         cls.app_context.push()
         cls.db.create_all()
         cls.app.config['FIXTURES_DIRS'] = [cls.app.root_path + '/tests/fixtures']
-        FixturesMixin.init_app(cls.app, cls.db)
+#        FixturesMixin.init_app(cls.app, cls.db)
     fixtures = ['user.json']
 
     @classmethod
@@ -77,6 +77,13 @@ class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
 
         resp = json.loads(response.data)
         self.assertEqual(resp['user'], '0')
+
+
+    # @unittest.skip('')
+    def test_custom_query_role_all(self):
+        roles = Role.query.all()
+
+        self.assertEqual(len(roles), 2)
 
 if __name__ == '__main__':
     unittest.main()
