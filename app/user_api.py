@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # @date 2016/06/4
-# @author fengyao.me
+# @author yaoelvon@gmail.com
 # @desc user api
 # @record
 #

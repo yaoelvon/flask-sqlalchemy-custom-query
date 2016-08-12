@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # @date 2016/06/3
-# @author fengyao.me
+# @author yaoelvon@gmail.com
 # @desc test for flask sqlalchemy custom query
 # @record
 #
@@ -87,8 +87,8 @@ class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
     # @unittest.skip('')
     def test_creating_user_and_adding_company_id(self):
         response = self.test_app.post('/api/users?db_filters={"company_id": 2}',
-                                   content_type='application/json;charset=utf-8',
-                                   data={"name": "li"})
+                                      content_type='application/json;charset=utf-8',
+                                      data={"name": "li"})
 
         print response.data
 

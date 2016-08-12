@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # @date 2016/06/03
-# @author feng yao
+# @author yaoevon@gmail.com
 # @desc custom methods of the query class in Flask-SQLAlchemy
 # @record
 #
