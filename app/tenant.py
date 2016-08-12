@@ -8,6 +8,7 @@
 
 import json
 
+
 class TenantContext(object):
     """租户对象"""
     def __init__(self, db_filters):

@@ -57,6 +57,29 @@ class MyModel(Model):
     query_class = MyBaseQuery
 
 
+def _my_declarative_constructor(self, tenant=None, **kwargs):
+    """A simple constructor that allows initialization from kwargs.
+
+    Sets attributes on the constructed instance using the names and
+    values in ``kwargs``.
+
+    Only keys that are present as
+    attributes of the instance's class are allowed. These could be,
+    for example, any mapped columns or relationships.
+    """
+
+    if tenant is not None:
+        setattr(self, "company_id", tenant.db_filters.get('company_id'))
+
+    cls_ = type(self)
+    for k in kwargs:
+        if not hasattr(cls_, k):
+            raise TypeError(
+                "%r is an invalid keyword argument for %s" %
+                (k, cls_.__name__))
+        setattr(self, k, kwargs[k])
+
+
 class MySQLAlchemy(BaseSQLAlchemy):
     def make_declarative_base(self, metadata=None):
         # in this case we're just using a custom Model class,
@@ -64,7 +87,8 @@ class MySQLAlchemy(BaseSQLAlchemy):
         base = declarative_base(cls=MyModel,
                                 name='Model',
                                 metadata=metadata,
-                                metaclass=_BoundDeclarativeMeta)
+                                metaclass=_BoundDeclarativeMeta,
+                                constructor=_my_declarative_constructor)
         base.query = _QueryProperty(self)
         return base
 

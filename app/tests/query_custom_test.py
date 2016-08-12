@@ -78,12 +78,24 @@ class QueryCustomTestCase(unittest.TestCase, FixturesMixin):
         resp = json.loads(response.data)
         self.assertEqual(resp['user'], '0')
 
-
     # @unittest.skip('')
     def test_custom_query_role_all(self):
         roles = Role.query.all()
 
         self.assertEqual(len(roles), 2)
+
+    # @unittest.skip('')
+    def test_creating_user_and_adding_company_id(self):
+        response = self.test_app.post('/api/users?db_filters={"company_id": 2}',
+                                   content_type='application/json;charset=utf-8',
+                                   data={"name": "li"})
+
+        print response.data
+
+        user = json.loads(response.data)
+        self.assertTrue("200" in response.status)
+        self.assertEqual(user['result'], 2)
+
 
 if __name__ == '__main__':
     unittest.main()

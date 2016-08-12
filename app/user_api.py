@@ -6,9 +6,11 @@
 # @record
 #
 
+import json
 from flask import Blueprint, Response, request, current_app, jsonify
 from app.models import User
 from app.tenant import TenantContext
+from app.database import db
 
 user = Blueprint('user', __name__)
 
@@ -30,6 +32,20 @@ def users_get():
 
 @user.route("/user", methods=["GET"])
 def user_get():
-    user = User.query.first()
+    u = User.query.first()
 
-    return jsonify({"user": user.name})
+    return jsonify({"user": u.name})
+
+
+@user.route("/users", methods=["POST"])
+def create_user():
+    tenant = request.environ.get('tenant_ctx')
+    u = User(tenant=tenant)
+    u.name = "li"
+
+    db.session.add(u)
+    db.session.commit()
+
+    print "user.company_id: {0}".format(u.company_id)
+
+    return jsonify({"result": u.company_id})
